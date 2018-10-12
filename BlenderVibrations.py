@@ -63,6 +63,25 @@ atoms,coords = load('/home/max/Desktop/LoadCoords/R.xyz')
 
 scale = {"H":0.5,"B":0.8,"C":0.71,"N":0.65,"O":0.63,"F":0.61}
 
+#Make the Materials
+HMat = bpy.data.materials.new('H')
+HMat.use_nodes = True
+HMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (0.85,0.85,0.85,1)
+Bat = bpy.data.materials.new('B')
+Bat.use_nodes = True
+BMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (234.0/255,178.0/255,58.0/255,1)
+CMat = bpy.data.materials.new('C')
+CMat.use_nodes = True
+CMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (0.20,0.20,0.20,1)
+NMat = bpy.data.materials.new('N')
+NMat.use_nodes = True
+NMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (82.0/255,140.0/255,230.0/255,1)
+OMat = bpy.data.materials.new('O')
+OMat.use_nodes = True
+OMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (245.0/255,62.0/255,79.0/255,1)
+FMat = bpy.data.materials.new('F')
+FMat.use_nodes = True
+FMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (60.0/255,224.0/255,120.0/255,1)
 
 #Loat the atoms
 D = bpy.data
@@ -74,12 +93,12 @@ scn = bpy.context.scene
 scn.frame_start = 1
 scn.frame_end = 200
 
-def Vibrate( modes ):
+def Vibrate( modes,speed=1 ):
  for t in range(0,200):
   scn.frame_set(t)
   displace = 0
   for mode in modes:
-   displace += np.sin(2*frequencies[mode]/300*np.pi*t/100)*FreqMatrix[mode]
+   displace += np.sin(2*speed*frequencies[mode]/300*np.pi*t/200)*FreqMatrix[mode]
   tcoords = displace+coords
   for i in range(0,len(coords)):
    obj = scn.objects[i]
