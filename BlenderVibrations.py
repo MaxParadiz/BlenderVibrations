@@ -65,33 +65,34 @@ file = '/home/max/Desktop/LoadCoords/RFreqAnharmonic.log'
 frequencies, FreqMatrix = load_matrix(file)
 atoms,coords = load_coordinates(file)
 
-scale = {1:0.5,5:0.8,6:0.71,7:0.65,8:0.63,9:0.61}
+atom_properties = {'1':{'scale':0.5,'name':'H'},'5':{'scale':0.8,'name':'B'},'6':{'scale':0.71,'name':'C'},'7':{'scale':0.65,'name':'N'}
+         ,'8':{'scale':0.63,'name':'O'},'9':{'scale':0.61,'name':'F'}}
 
 #Make the Materials
-HMat = bpy.data.materials.new('1')
+HMat = bpy.data.materials.new('H')
 HMat.use_nodes = True
 HMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (0.85,0.85,0.85,1)
-BMat = bpy.data.materials.new('5')
+BMat = bpy.data.materials.new('B')
 BMat.use_nodes = True
 BMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (234.0/255,178.0/255,58.0/255,1)
-CMat = bpy.data.materials.new('6')
+CMat = bpy.data.materials.new('C')
 CMat.use_nodes = True
 CMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (0.20,0.20,0.20,1)
-NMat = bpy.data.materials.new('7')
+NMat = bpy.data.materials.new('N')
 NMat.use_nodes = True
 NMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (82.0/255,140.0/255,230.0/255,1)
-OMat = bpy.data.materials.new('8')
+OMat = bpy.data.materials.new('O')
 OMat.use_nodes = True
 OMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (245.0/255,62.0/255,79.0/255,1)
-FMat = bpy.data.materials.new('9')
+FMat = bpy.data.materials.new('F')
 FMat.use_nodes = True
 FMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (60.0/255,224.0/255,120.0/255,1)
 
 #Loat the atoms
 D = bpy.data
 for i in range(0,len(atoms)):
- bpy.ops.mesh.primitive_uv_sphere_add(segments=96, ring_count=48, location=(coords[i]),size=scale[atoms[i]]*1.5)
- bpy.context.scene.objects[i].data.materials.append(D.materials[str(atoms[i]]))
+ bpy.ops.mesh.primitive_uv_sphere_add(segments=64, ring_count=32, location=(coords[i]),size=atom_properties[atoms[i]]['scale']*1.5)
+ bpy.context.scene.objects[i].data.materials.append(D.materials[atom_properties[atoms[i]]['name']])
 
 scn = bpy.context.scene
 scn.frame_start = 1
