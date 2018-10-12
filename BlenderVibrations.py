@@ -65,28 +65,18 @@ file = '/home/max/Desktop/LoadCoords/RFreqAnharmonic.log'
 frequencies, FreqMatrix = load_matrix(file)
 atoms,coords = load_coordinates(file)
 
-atom_properties = {'1':{'scale':0.5,'name':'H'},'5':{'scale':0.8,'name':'B'},'6':{'scale':0.71,'name':'C'},'7':{'scale':0.65,'name':'N'}
-         ,'8':{'scale':0.63,'name':'O'},'9':{'scale':0.61,'name':'F'}}
+atom_properties = {'1':{'scale':0.5,'name':'H','Color':(0.85,0.85,0.85,1)}
+         ,'5':{'scale':0.8,'name':'B','Color':(234.0/255,178.0/255,58.0/255,1)}
+         ,'6':{'scale':0.71,'name':'C','Color':(0.20,0.20,0.20,1)}
+         ,'7':{'scale':0.65,'name':'N','Color':(82.0/255,140.0/255,230.0/255,1)}
+         ,'8':{'scale':0.63,'name':'O','Color':(245.0/255,62.0/255,79.0/255,1)}
+         ,'9':{'scale':0.61,'name':'F','Color':(60.0/255,224.0/255,120.0/255,1)}}
 
 #Make the Materials
-HMat = bpy.data.materials.new('H')
-HMat.use_nodes = True
-HMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (0.85,0.85,0.85,1)
-BMat = bpy.data.materials.new('B')
-BMat.use_nodes = True
-BMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (234.0/255,178.0/255,58.0/255,1)
-CMat = bpy.data.materials.new('C')
-CMat.use_nodes = True
-CMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (0.20,0.20,0.20,1)
-NMat = bpy.data.materials.new('N')
-NMat.use_nodes = True
-NMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (82.0/255,140.0/255,230.0/255,1)
-OMat = bpy.data.materials.new('O')
-OMat.use_nodes = True
-OMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (245.0/255,62.0/255,79.0/255,1)
-FMat = bpy.data.materials.new('F')
-FMat.use_nodes = True
-FMat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (60.0/255,224.0/255,120.0/255,1)
+for atom_type in atom_properties:
+ New_material = bpy.data.materials.new(atom_properties[atom_type]['name'])
+ New_material.use_nodes = True
+ New_material.node_tree.nodes["Principled BSDF"].inputs[0].default_value = atom_properties[atom_type]['Color']
 
 #Loat the atoms
 D = bpy.data
@@ -98,12 +88,15 @@ scn = bpy.context.scene
 scn.frame_start = 1
 scn.frame_end = 200
 
-def Vibrate( modes,speed=1 ):
+def Vibrate( modes,speed=1,amp = 1,phase=[] ):
+ phase = np.concatenate([phase,np.zeros(len(modes)-len(phase))])
  for t in range(0,200):
   scn.frame_set(t)
   displace = 0
+  p = 0
   for mode in modes:
-   displace += np.sin(2*speed*frequencies[mode]/300*np.pi*t/200)*FreqMatrix[mode]
+   displace += amp*np.sin(2*speed*frequencies[mode]/300*np.pi*t/200+phase[p])*FreqMatrix[mode]
+   p += 1
   tcoords = displace+coords
   for i in range(0,len(coords)):
    obj = scn.objects[i]
